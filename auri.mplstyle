@@ -1,0 +1,29 @@
+figure.figsize: 6, 4
+figure.dpi: 150
+
+axes.linewidth: 0.2
+xtick.major.width: 0.2
+xtick.minor.width: 0.12
+ytick.major.width: 0.2
+ytick.minor.width: 0.12
+grid.linewidth: 0.2
+
+lines.linewidth: 0.3
+lines.markeredgewidth: 0.2
+
+patch.linewidth: 0.2
+
+hatch.linewidth: 0.2
+
+boxplot.flierprops.markeredgewidth: 0.2
+boxplot.flierprops.linewidth: 0.2
+boxplot.boxprops.linewidth: 0.2
+boxplot.whiskerprops.linewidth: 0.2
+boxplot.capprops.linewidth: 0.2
+boxplot.medianprops.linewidth: 0.2
+boxplot.meanprops.linewidth: 0.2
+
+font.family: sans-serif, KoPubDotum Medium
+font.size: 8.0
+
+# figure.constrained_layout.use: True  # causes breakage

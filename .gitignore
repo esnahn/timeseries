@@ -1,0 +1,17 @@
+venv
+__pycache__
+
+*.zip
+*.csv
+*.xls*
+*.part
+*.parquet
+*.txt
+!requirements.txt
+
+*.url
+*.pptx
+*.pdf
+
+# config.py
+x13as/*

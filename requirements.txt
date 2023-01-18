@@ -1,0 +1,22 @@
+wheel
+requests
+
+notebook
+ipykernel
+
+black
+wcwidth
+tabulate[widechars]
+tqdm
+
+numpy
+pandas
+# SQLAlchemy
+# oracledb
+# pyarrow
+# dask
+
+statsmodels
+
+matplotlib
+seaborn
