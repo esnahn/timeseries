@@ -156,7 +156,7 @@ def x13_arima_analysis(
     spec += "automdl{{{0}}}\n".format(options)
     spec += _make_regression_options(trading, exog)
     spec += _make_forecast_options(forecast_periods)
-    spec += "x11{ save=(d11 d12 d13) }"
+    spec += "x11{ save=(d10 d11 d12 d13) }"  # add seasonal
     if speconly:
         return spec
     # write it to a tempfile
@@ -181,6 +181,7 @@ def x13_arima_analysis(
         results = _open_and_read(ftempout.name + ".out")
         seasadj = _open_and_read(ftempout.name + ".d11")
         trend = _open_and_read(ftempout.name + ".d12")
+        seasonal = _open_and_read(ftempout.name + ".d10")  # add seasonal
         irregular = _open_and_read(ftempout.name + ".d13")
     finally:
         try:  # sometimes this gives a permission denied error?
@@ -201,6 +202,7 @@ def x13_arima_analysis(
 
     seasadj = _convert_out_to_series(seasadj, endog.index, "seasadj")
     trend = _convert_out_to_series(trend, endog.index, "trend")
+    seasonal = _convert_out_to_series(seasonal, endog.index, "seasonal")  # add seasonal
     irregular = _convert_out_to_series(irregular, endog.index, "irregular")
 
     # NOTE: there is not likely anything in stdout that's not in results
@@ -211,6 +213,7 @@ def x13_arima_analysis(
             results=results,
             seasadj=seasadj,
             trend=trend,
+            seasonal=seasonal,  # add seasonal
             irregular=irregular,
             stdout=stdout,
         )
@@ -220,6 +223,7 @@ def x13_arima_analysis(
             results=results,
             seasadj=seasadj,
             trend=trend,
+            seasonal=seasonal,  # add seasonal
             irregular=irregular,
             stdout=stdout,
             spec=spec,
@@ -236,15 +240,17 @@ class X13ArimaAnalysisResult(object):
         from statsmodels.graphics.utils import _import_mpl
 
         plt = _import_mpl()
-        fig, axes = plt.subplots(4, 1, sharex=True)
+        fig, axes = plt.subplots(5, 1, sharex=True)
         self.observed.plot(ax=axes[0], legend=False)
         axes[0].set_ylabel("Observed")
         self.seasadj.plot(ax=axes[1], legend=False)
         axes[1].set_ylabel("Seas. Adjusted")
         self.trend.plot(ax=axes[2], legend=False)
         axes[2].set_ylabel("Trend")
-        self.irregular.plot(ax=axes[3], legend=False)
-        axes[3].set_ylabel("Irregular")
+        self.seasonal.plot(ax=axes[3], legend=False)  # add seasonal
+        axes[3].set_ylabel("Seasonal")
+        self.irregular.plot(ax=axes[4], legend=False)
+        axes[4].set_ylabel("Irregular")
 
         fig.tight_layout()
         return fig
