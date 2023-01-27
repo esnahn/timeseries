@@ -14,9 +14,12 @@ pandas
 # SQLAlchemy
 # oracledb
 # pyarrow
+fastparquet
 # dask
 
 statsmodels
 
 matplotlib
 seaborn
+
+korean-romanizer
