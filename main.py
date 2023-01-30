@@ -1,3 +1,4 @@
+from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 import statsmodels.api as sm
@@ -10,35 +11,50 @@ plt.style.use("./auri.mplstyle")
 
 pd.options.display.unicode.east_asian_width = True
 
-# columns = []
-# for key, df in data.dfs_approval.items():
-#     df.apply(lambda x: columns.append("_".join([key, *x.name])))
-# print(columns)
+
+def run_x13(s: pd.Series, name=None, x12path="./x13as/x13as.exe"):
+    if name is None:
+        name = s.name
+
+    # romanize name for American x13
+    name_romanized = Romanizer(name).romanize()
+    s_new = s.copy().rename(name_romanized)
+
+    results = x13.x13_arima_analysis(s_new, x12path=x12path)
+    # return results
+
+    arima_results = x13.get_arima_order_from_results(results)
+    order, sorder = arima_results.order, arima_results.sorder
+
+    df_result = pd.concat(
+        [
+            results.observed,
+            results.seasadj,
+            results.trend,
+            results.seasonal,
+            results.irregular,
+        ],
+        axis="columns",
+    )
+
+    fig = results.plot()
+
+    return df_result, fig, order, sorder
+
+
+Path("output").mkdir(exist_ok=True)
 
 dfs_approval = data.process_data()
 
-
-def get_x13_order(s, x12path="./x13as/x13as.exe"):
-    res = x13.x13_arima_select_order(s, x12path=x12path)
-    return res.order, res.sorder
-
-
 for key, df in dfs_approval.items():
     for label, s in df.items():
-        print(key)
+        name = "_".join([key, *s.name])
 
-        # romanize name for American x13
-        s_name_orig = "_".join([key, *s.name])
-        s_name_latin = Romanizer(s_name_orig).romanize()
-        s_new = s.copy().rename(s_name_latin)
+        if not Path(f"output/{name}.csv").exists():
+            df_result, fig, order, sorder = run_x13(s, name)
 
-        print(s_new.name)
-        # print(get_x13_order(s_new))
-
-        results = x13.x13_arima_analysis(s_new, x12path="./x13as/x13as.exe")
-        fig = results.plot()
-        fig.tight_layout()
-        fig.show()
-        input("press enter to exit...")
+            df_result.to_csv(f"output/{name}.csv", encoding="utf-8-sig")
+            fig.savefig(f"output/{name}.png")
+            fig.savefig(f"output/{name}.svg")
         break
     break
