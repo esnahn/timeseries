@@ -16,10 +16,20 @@ def run_x13(s: pd.Series, name=None, x12path="./x13as/x13as.exe"):
     if name is None:
         name = s.name
 
+    # copy original series
+    s_new = s.copy()
+
     # romanize name for American x13
     name_romanized = Romanizer(name).romanize()
-    s_new = s.copy().rename(name_romanized)
+    s_new = s_new.rename(name_romanized)
 
+    # trim missing values at each ends
+    s_new = s_new.truncate(s_new.first_valid_index(), s_new.last_valid_index())
+
+    # fill missing values in the middle
+    s_new = s_new.fillna(0)
+
+    try:
     results = x13.x13_arima_analysis(s_new, x12path=x12path)
     # return results
 

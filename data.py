@@ -126,6 +126,17 @@ def process_data_use28():
     # give meaningful names to column levels
     df.columns.names = ["value", "use28", "use28_sub"]
 
+    # combine columns with name change and drop old column
+    for c0 in df.columns.levels[0]:
+        for col_old, col_new in [
+            (
+                ("분뇨.쓰레기처리시설", "분뇨.쓰레기처리시설"),
+                ("자원순환관련시설", "자원순환관련시설"),
+            ),
+        ]:
+            df[(c0, *col_new)] = df[(c0, *col_new)].combine_first(df[(c0, *col_old)])
+            df = df.drop((c0, *col_old), axis="columns")
+
     # # remove original series
     # del s_approval_by_use28_count
     # del s_approval_by_use28_floorarea
