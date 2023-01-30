@@ -4,6 +4,7 @@
 # https://github.com/statsmodels/statsmodels/issues/6485
 
 import os
+import re
 import tempfile
 from warnings import warn
 
@@ -27,7 +28,9 @@ from statsmodels.tsa.x13 import (
     pandas_to_series_spec,
     run_spec,
     x13_arima_select_order,
+    _clean_order,
 )
+from statsmodels.tools.tools import Bunch
 
 
 def x13_arima_analysis(
@@ -228,6 +231,62 @@ def x13_arima_analysis(
             stdout=stdout,
             spec=spec,
         )
+    return res
+
+
+def get_arima_order_from_results(results):
+    """
+    Perform automatic seasonal ARIMA order identification using x12/x13 ARIMA.
+
+    Parameters
+    ----------
+    results : X13ArimaAnalysisResult
+        An output from x13_arima_analysis.
+
+    Returns
+    -------
+    Bunch
+        A bunch object containing the listed attributes.
+
+        - order : tuple
+          The regular order.
+        - sorder : tuple
+          The seasonal order.
+        - include_mean : bool
+          Whether to include a mean or not.
+        - results : str
+          The full results from the X12/X13 analysis.
+        - stdout : str
+          The captured stdout from the X12/X13 analysis.
+
+    Notes
+    -----
+    This works by creating a specification file, writing it to a temporary
+    directory, invoking X12/X13 in a subprocess, and reading the output back
+    in.
+    """
+
+    if not isinstance(results, X13ArimaAnalysisResult) or not hasattr(
+        results, "results"
+    ):
+        raise ValueError(repr(results))
+
+    model = re.search("(?<=Final automatic model choice : ).*", results.results)
+    order = model.group()
+    if re.search("Mean is not significant", results.results):
+        include_mean = False
+    elif re.search("Constant", results.results):
+        include_mean = True
+    else:
+        include_mean = False
+    order, sorder = _clean_order(order)
+    res = Bunch(
+        order=order,
+        sorder=sorder,
+        include_mean=include_mean,
+        results=results.results,
+        stdout=results.stdout,
+    )
     return res
 
 
