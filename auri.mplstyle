@@ -1,6 +1,10 @@
 figure.figsize: 6, 4
 figure.dpi: 150
 
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.1  # default
+
 axes.linewidth: 0.2
 xtick.major.width: 0.2
 xtick.minor.width: 0.12
@@ -26,4 +30,11 @@ boxplot.meanprops.linewidth: 0.2
 font.family: sans-serif, KoPubDotum Medium
 font.size: 8.0
 
+figure.labelsize: large  # default
+axes.titlesize: large  # default
+axes.labelsize: medium  # default
+xtick.labelsize: small
+ytick.labelsize: small
+
+# figure.autolayout: True
 # figure.constrained_layout.use: True  # causes breakage
