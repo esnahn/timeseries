@@ -56,5 +56,3 @@ for key, df in dfs_approval.items():
             df_result.to_csv(f"output/{name}.csv", encoding="utf-8-sig")
             fig.savefig(f"output/{name}.png")
             fig.savefig(f"output/{name}.svg")
-        break
-    break
