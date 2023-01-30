@@ -15,3 +15,5 @@ __pycache__
 
 # config.py
 x13as/*
+
+output/*
