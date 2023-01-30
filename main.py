@@ -15,13 +15,15 @@ pd.options.display.unicode.east_asian_width = True
 #     df.apply(lambda x: columns.append("_".join([key, *x.name])))
 # print(columns)
 
+dfs_approval = data.process_data()
+
 
 def get_x13_order(s, x12path="./x13as/x13as.exe"):
     res = x13.x13_arima_select_order(s, x12path=x12path)
     return res.order, res.sorder
 
 
-for key, df in data.dfs_approval.items():
+for key, df in dfs_approval.items():
     for label, s in df.items():
         print(key)
 
