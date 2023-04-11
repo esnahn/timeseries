@@ -66,22 +66,25 @@ for key, df in dfs_approval.items():
         # sanitize name
         name = re.sub("\\W", "_", name)
 
-        print(f"{name}...", end=" ")
+        if Path(f"output/{name}.csv").exists():
+            print(f"csv already exists: {name}")
+            continue
 
-        if not Path(f"output/{name}.csv").exists():
-            try:
-                df_result, fig, order, sorder = run_x13(s, name)
+        if "_동수_" in name:  # skip building count
+            continue
 
-                df_result.to_csv(f"output/{name}.csv", encoding="utf-8-sig")
-                fig.savefig(f"output/{name}.png")
-                fig.savefig(f"output/{name}.svg")
+        print(f"{name}...")
 
-            except X13Error as e:
-                print("error")
-                Path("error").mkdir(exist_ok=True)
-                with open(f"error/{name}.txt", "w") as f:
-                    traceback.print_exc(file=f)
-            else:
-                print("done")
+        try:
+            df_result, fig, order, sorder = run_x13(s, name)
+            print(order, sorder, end=" ")
+            df_result.to_csv(f"output/{name}.csv", encoding="utf-8-sig")
+            fig.savefig(f"output/{name}.png")
+            fig.savefig(f"output/{name}.svg")
+        except X13Error as e:
+            print("error")
+            Path("error").mkdir(exist_ok=True)
+            with open(f"error/{name}.txt", "w") as f:
+                traceback.print_exc(file=f)
         else:
-            print("already exists")
+            print("done")
