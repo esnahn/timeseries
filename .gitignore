@@ -17,3 +17,5 @@ __pycache__
 x13as/*
 
 output/*
+
+data/x13/*
