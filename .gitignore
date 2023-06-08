@@ -1,6 +1,8 @@
 venv
 __pycache__
 
+.vscode
+
 *.zip
 *.csv
 *.xls*
@@ -19,3 +21,5 @@ x13as/*
 output/*
 
 data/x13/*
+
+!col_order.txt
