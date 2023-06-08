@@ -7,7 +7,8 @@ from pprint import pprint
 
 results = Path("data/x13")
 
-d11 = results.glob("*.d11")
+d11 = results.glob("*.d11")  # final seasonally adjusted data
+d12 = results.glob("*.d12")  # final trend cycle
 saa = results.glob("*.saa")
 
 # pprint(list(d11))
@@ -49,6 +50,9 @@ def do_results(paths, col_order):
 
 df_d11 = do_results(d11, col_order)
 df_d11.to_csv(f"output/x13results_d11.csv", encoding="utf-8-sig")
+
+df_d12 = do_results(d12, col_order)
+df_d12.to_csv(f"output/x13results_d12.csv", encoding="utf-8-sig")
 
 df_saa = do_results(saa, col_order)
 df_saa.to_csv(f"output/x13results_saa.csv", encoding="utf-8-sig")
