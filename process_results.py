@@ -25,7 +25,7 @@ results = {
 }
 
 
-def read_x13_output(path: Union[str, Path]) -> pd.Series:
+def read_x13_output(path: Union[str, Path]) -> pd.DataFrame:
     path = Path(path)
     with open(str(path), "r") as f:
         df = (
