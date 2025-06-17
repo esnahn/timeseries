@@ -20,6 +20,17 @@ x13as/*
 
 output/*
 
-data/x13/*
+# data/x13/*
+*.d10
+*.d11
+*.d12
+*.d13
+*.d16
+*.err
+*.fct
+*.out
+*.saa
+*.txt
+
 
 !col_order.txt

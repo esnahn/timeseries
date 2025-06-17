@@ -1,18 +1,28 @@
 from io import StringIO
-from typing import Union
-import auri
-import pandas as pd
 from pathlib import Path
-from pprint import pprint
+from typing import Union
 
-results = Path("data/x13")
+import pandas as pd
 
-d11 = results.glob("*.d11")  # final seasonally adjusted data
-d12 = results.glob("*.d12")  # final trend cycle
-saa = results.glob("*.saa")
+# import auri
+# from pprint import pprint
 
-# pprint(list(d11))
-# pprint(list(saa))
+bokx13_path = Path("C:/BOKX13")
+data_path = bokx13_path / "data"
+# spec_path = bokx13_path / "spec"
+out_path = bokx13_path / "out"
+
+# CHANGE THIS!!! set input and output paths
+dta_path = data_path / "20250617_reorder.dta"
+save_to_path = Path("output")
+
+results = {
+    "d11": out_path.glob("*.d11"),  # final seasonally adjusted data
+    # "d12": out_path.glob("*.d12"),  # final trend cycle
+    "saa": out_path.glob(
+        "*.saa"
+    ),  # final seasonally adjusted series with forced yearly totals
+}
 
 
 def read_x13_output(path: Union[str, Path]) -> pd.Series:
@@ -28,12 +38,12 @@ def read_x13_output(path: Union[str, Path]) -> pd.Series:
                 engine="python",
             )
             .rename_axis(index={0: "date"})
-            .rename(columns={0: "date", 1: path.stem})
+            .rename(columns={0: "date", 1: Path(path).stem})
         )
     return df
 
 
-col_order = pd.read_csv("col_order.txt", header=None)[0].tolist()
+col_order = pd.read_csv(dta_path, header=None)[0].apply(lambda p: Path(p).stem).tolist()
 print(col_order)
 
 
@@ -48,11 +58,7 @@ def do_results(paths, col_order):
     return df
 
 
-df_d11 = do_results(d11, col_order)
-df_d11.to_csv(f"output/x13results_d11.csv", encoding="utf-8-sig")
-
-df_d12 = do_results(d12, col_order)
-df_d12.to_csv(f"output/x13results_d12.csv", encoding="utf-8-sig")
-
-df_saa = do_results(saa, col_order)
-df_saa.to_csv(f"output/x13results_saa.csv", encoding="utf-8-sig")
+for key, files in results.items():
+    print(f"Processing {key} files...")
+    df = do_results(results[key], col_order)
+    df.to_csv(save_to_path / f"x13results_{key}.csv", encoding="utf-8-sig")
